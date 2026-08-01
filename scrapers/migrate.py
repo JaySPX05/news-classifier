@@ -3,7 +3,7 @@ import sqlite3
 import os
 from sqlalchemy import create_engine, text
 
-DATABASE_URL = "postgresql://postgres.ogfopocpyfiidjsmgnaz:NewsClassifier2026@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+DATABASE_URL = st.secrets["DATABASE_URL"]
 
 SQLITE_PATH = "D:/news-classifier/scrapers/data/headlines.db"
 
