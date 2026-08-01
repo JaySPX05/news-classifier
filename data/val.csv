@@ -1,54 +1,54 @@
-headline,source,bias_label
-FTSE 100 on track for best month since first US attacks on Iran five months ago – as it happened,TheGuardian,left
-Savannah Bananas stars trade baseball dreams for kids' smiles: 'Exactly where God put me',FoxNews,right
-Celtic reject West Ham Engels bid and confirm Johnston interest,BBC,center
-Russia appears to infiltrate first ‘fortress city’ as Ukraine changes guard,AlJazeera,center
-"New Google Earth AI tool could fuel misinformation, experts say",BBC,center
-Infantino insists FIFA’s World Cup plan is proposal and not ‘obligation’,AlJazeera,center
-World-renowned climber Nirmal Purja among 10 struck by avalanche on Pakistan mountain,TheGuardian,left
-‘Like volcanic ash falling’: Inside Aeon mall after Japan’s earthquake,AlJazeera,center
-Courting controversy and befriending Trump - the story of Fifa boss Infantino,BBC,center
-Israeli strikes leave buildings burning in Gaza City,AlJazeera,center
-"A quarter of young Africans believe USAID cuts could be positive, survey finds",TheGuardian,left
-Hunter Biden reveals he's 'definitely not running' for office despite media tour,FoxNews,right
-Four people die trying to cross Channel in small boats,BBC,center
-Why do parts of England and Wales keep falling into drought?,BBC,center
-Dolphins not going to 'throw in the towel and just rebuild' but that comes with higher expectations,FoxNews,right
-FIFA World Cup plan fallout: Infantino’s senior adviser Cordeiro resigns,AlJazeera,center
-"US launches fresh strikes on Iran after days-long pause, amid fears the war is widening",TheGuardian,left
-Drones offer alternative to balloons for weather research,TheGuardian,left
-Bombshell voting scandal adds to pattern of noncitizen voters as Trump warns of threat to ‘heart' of democracy,FoxNews,right
-Olivia Dean nominated and  Lily Allen missing from Mercury Prize list,BBC,center
-'Ready to write Chelsea story' - Lacroix makes £52m move,BBC,center
-US joins forces with Saudis to strike Tehran-backed militias in Iraq,TheGuardian,left
-US borrowing costs hit 19-year high as Fed holds interest rates,TheGuardian,left
-DAVID MARCUS: America needs a museum for COVID madness,FoxNews,right
-Congress hasn't passed AI rules for schools. So these 98 teens did it themselves,NPR,left
-Russia’s Africa Corps killed Mali civilians in air strike: HRW,AlJazeera,center
-Fifteen elephant deaths in Kenya may be due to cyanide poisoning,TheGuardian,left
-Fifty-three days and counting: 93-year-old leader’s record absence fuels health speculation,TheGuardian,left
-Three-year roadmap proposed for Hamas disarmament in Gaza,AlJazeera,center
-Mauricio Pochettino nearing new deal to stay as United States manager through 2030 FIFA World Cup,FoxNews,right
-Critics rage at rogue red-state senators for blocking Todd Blanche after backing Biden's pick,FoxNews,right
-"Middle East crisis live: Hamas will hand over weapons to new Gaza administration, says official, but deal depends on Israeli withdrawal",TheGuardian,left
-Burnham faces criticism over plans for mayors to get share of income tax,BBC,center
-Liberal court stuns with ruling that hands Trump major immigration win,FoxNews,right
-Death toll from southwestern Japan quake climbs to 34,NPR,left
-Watch: Giant iceberg turns over near  Greenland's coast,BBC,center
-Washington mother pulls children from school after Pride lesson shown in music class without notice,FoxNews,right
-Why is UEFA threatening FIFA boycott? Infantino’s World Cup plan explained,AlJazeera,center
-Bank holds interest rates but says it is ready to raise them if Iran war escalates,BBC,center
-The economy slowed a bit -- but Americans continued to spend,NPR,left
-India’s Cockroach movement threatens to restart protests after mass student arrests,TheGuardian,left
-The promise I made to Ismail al-Ghoul,AlJazeera,center
-Labour says Reform ‘up to its neck in sleaze’ and demands investigation into donations,TheGuardian,left
-Far-left streamer Hasan Piker guarantees Democratic nominee in 2028 will be anti-Israel,FoxNews,right
-"Healey sets budget for late October, promising to ‘spread money and power’ around UK",TheGuardian,left
-Tom Selleck says 'Blue Bloods' cast made major sacrifice to save show before cancellation,FoxNews,right
-Senior Infantino adviser quits after Asian federation opposes World Cup investment plan,BBC,center
-NATO jets scramble as Russian missile detonates in Poland,AlJazeera,center
-Investigators believe Iranian hackers are likely behind cyberattack on Minnesota water systems: report,FoxNews,right
-He watched the 1966 World Cup final at Wembley aged 16 - no day since has matched it,BBC,center
-"Spain deploys military after thousands of migrants overwhelm border enclave, at least 18 dead",FoxNews,right
-DR Congo Ebola epidemic becomes world’s second largest outbreak,AlJazeera,center
-Daughter of British couple killed in Spanish wildfire rejects claim they ignored order to leave,TheGuardian,left
+headline,source,bias_label,sentiment
+FTSE 100 on track for best month since first US attacks on Iran five months ago – as it happened,TheGuardian,left,0.3182
+Savannah Bananas stars trade baseball dreams for kids' smiles: 'Exactly where God put me',FoxNews,right,0.7845
+Celtic reject West Ham Engels bid and confirm Johnston interest,BBC,center,0.0772
+Russia appears to infiltrate first ‘fortress city’ as Ukraine changes guard,AlJazeera,center,0.0
+"New Google Earth AI tool could fuel misinformation, experts say",BBC,center,-0.3182
+Infantino insists FIFA’s World Cup plan is proposal and not ‘obligation’,AlJazeera,center,0.0
+World-renowned climber Nirmal Purja among 10 struck by avalanche on Pakistan mountain,TheGuardian,left,-0.25
+‘Like volcanic ash falling’: Inside Aeon mall after Japan’s earthquake,AlJazeera,center,0.0
+Courting controversy and befriending Trump - the story of Fifa boss Infantino,BBC,center,0.0
+Israeli strikes leave buildings burning in Gaza City,AlJazeera,center,-0.4019
+"A quarter of young Africans believe USAID cuts could be positive, survey finds",TheGuardian,left,0.34
+Hunter Biden reveals he's 'definitely not running' for office despite media tour,FoxNews,right,0.4019
+Four people die trying to cross Channel in small boats,BBC,center,-0.5994
+Why do parts of England and Wales keep falling into drought?,BBC,center,-0.1531
+Dolphins not going to 'throw in the towel and just rebuild' but that comes with higher expectations,FoxNews,right,0.0
+FIFA World Cup plan fallout: Infantino’s senior adviser Cordeiro resigns,AlJazeera,center,-0.3182
+"US launches fresh strikes on Iran after days-long pause, amid fears the war is widening",TheGuardian,left,-0.7845
+Drones offer alternative to balloons for weather research,TheGuardian,left,0.0
+Bombshell voting scandal adds to pattern of noncitizen voters as Trump warns of threat to ‘heart' of democracy,FoxNews,right,-0.7717
+Olivia Dean nominated and  Lily Allen missing from Mercury Prize list,BBC,center,0.2732
+'Ready to write Chelsea story' - Lacroix makes £52m move,BBC,center,0.3612
+US joins forces with Saudis to strike Tehran-backed militias in Iraq,TheGuardian,left,-0.128
+US borrowing costs hit 19-year high as Fed holds interest rates,TheGuardian,left,0.4588
+DAVID MARCUS: America needs a museum for COVID madness,FoxNews,right,-0.4404
+Congress hasn't passed AI rules for schools. So these 98 teens did it themselves,NPR,left,0.0
+Russia’s Africa Corps killed Mali civilians in air strike: HRW,AlJazeera,center,-0.7184
+Fifteen elephant deaths in Kenya may be due to cyanide poisoning,TheGuardian,left,-0.5859
+Fifty-three days and counting: 93-year-old leader’s record absence fuels health speculation,TheGuardian,left,0.0
+Three-year roadmap proposed for Hamas disarmament in Gaza,AlJazeera,center,0.0
+Mauricio Pochettino nearing new deal to stay as United States manager through 2030 FIFA World Cup,FoxNews,right,0.4215
+Critics rage at rogue red-state senators for blocking Todd Blanche after backing Biden's pick,FoxNews,right,-0.8074
+"Middle East crisis live: Hamas will hand over weapons to new Gaza administration, says official, but deal depends on Israeli withdrawal",TheGuardian,left,-0.3071
+Burnham faces criticism over plans for mayors to get share of income tax,BBC,center,-0.1779
+Liberal court stuns with ruling that hands Trump major immigration win,FoxNews,right,0.6344
+Death toll from southwestern Japan quake climbs to 34,NPR,left,-0.5994
+Watch: Giant iceberg turns over near  Greenland's coast,BBC,center,0.0
+Washington mother pulls children from school after Pride lesson shown in music class without notice,FoxNews,right,0.34
+Why is UEFA threatening FIFA boycott? Infantino’s World Cup plan explained,AlJazeera,center,-0.6908
+Bank holds interest rates but says it is ready to raise them if Iran war escalates,BBC,center,-0.2732
+The economy slowed a bit -- but Americans continued to spend,NPR,left,0.0
+India’s Cockroach movement threatens to restart protests after mass student arrests,TheGuardian,left,-0.7506
+The promise I made to Ismail al-Ghoul,AlJazeera,center,0.3182
+Labour says Reform ‘up to its neck in sleaze’ and demands investigation into donations,TheGuardian,left,0.0
+Far-left streamer Hasan Piker guarantees Democratic nominee in 2028 will be anti-Israel,FoxNews,right,0.0
+"Healey sets budget for late October, promising to ‘spread money and power’ around UK",TheGuardian,left,0.4019
+Tom Selleck says 'Blue Bloods' cast made major sacrifice to save show before cancellation,FoxNews,right,0.5367
+Senior Infantino adviser quits after Asian federation opposes World Cup investment plan,BBC,center,0.0
+NATO jets scramble as Russian missile detonates in Poland,AlJazeera,center,0.0
+Investigators believe Iranian hackers are likely behind cyberattack on Minnesota water systems: report,FoxNews,right,0.0
+He watched the 1966 World Cup final at Wembley aged 16 - no day since has matched it,BBC,center,-0.296
+"Spain deploys military after thousands of migrants overwhelm border enclave, at least 18 dead",FoxNews,right,-0.7184
+DR Congo Ebola epidemic becomes world’s second largest outbreak,AlJazeera,center,0.0
+Daughter of British couple killed in Spanish wildfire rejects claim they ignored order to leave,TheGuardian,left,-0.8807
