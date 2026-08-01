@@ -11,9 +11,9 @@ def export():
     conn = sqlite3.connect(DB_PATH)
 
     df = pd.read_sql_query(
-        "SELECT headline, source, bias_label FROM headlines WHERE bias_label IS NOT NULL",
-        conn
-    )
+    "SELECT headline, source, bias_label, sentiment FROM headlines WHERE bias_label IS NOT NULL",
+    conn
+)
     conn.close()
 
     print(f"Total labeled headlines: {len(df)}")
