@@ -8,7 +8,6 @@ from transformers import DistilBertTokenizer, DistilBertForSequenceClassificatio
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 DB_PATH   = "D:/news-classifier/scrapers/data/headlines.db"
-MODEL_DIR = "D:/news-classifier/models/distilbert"
 
 ID2LABEL = {0: "center", 1: "left", 2: "right"}
 LABEL_COLORS = {"left": "#4A90D9", "center": "#7B7B7B", "right": "#E05C5C"}
@@ -16,8 +15,8 @@ LABEL_COLORS = {"left": "#4A90D9", "center": "#7B7B7B", "right": "#E05C5C"}
 # ── Load model once (cached so it doesn't reload on every interaction) ──
 @st.cache_resource
 def load_model():
-    tokenizer = DistilBertTokenizer.from_pretrained(MODEL_DIR)
-    model = DistilBertForSequenceClassification.from_pretrained(MODEL_DIR)
+    tokenizer = DistilBertTokenizer.from_pretrained("JaySPS/news-bias-classifier")
+    model = DistilBertForSequenceClassification.from_pretrained("JaySPS/news-bias-classifier")
     model.eval()
     return tokenizer, model
 
