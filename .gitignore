@@ -5,3 +5,6 @@ __pycache__/
 models/distilbert/
 scrapers/data/
 .streamlit/secrets.toml
+models/fake_news_distilbert/
+data/Fake.csv
+data/True.csv
