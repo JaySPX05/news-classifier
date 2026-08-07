@@ -1,0 +1,417 @@
+
+
+Results · HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #F2EFE6; font-family: 'Syne', sans-serif; color: #0A0A08; font-size: 13px; }
+ 
+.result-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid #C8C2AE;
+  margin-bottom: 16px;
+}
+ 
+.result-cell {
+  padding: 14px 16px;
+  border-right: 1px solid #C8C2AE;
+}
+.result-cell:last-child { border-right: none; }
+ 
+.result-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #7A7660;
+  margin-bottom: 8px;
+}
+ 
+.result-val {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: #9E9780;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+ 
+.result-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: #7A7660;
+  margin-top: 6px;
+}
+ 
+.conf-rail { height: 2px; background: #C8C2AE; margin-top: 10px; overflow: hidden; }
+.conf-fill { height: 100%; background: #0A0A08; transition: width 0.5s cubic-bezier(0.16,1,0.3,1); }
+ 
+.chart-wrap {
+  border: 1px solid #C8C2AE;
+  border-top: none;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+ 
+.chart-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #7A7660;
+  margin-bottom: 10px;
+}
+ 
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  border: 1px solid #C8C2AE;
+  background: #F2EFE6;
+}
+ 
+.empty-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: #9E9780;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+ 
+.empty-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: #9E9780;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+ 
+/* Bias colors */
+.val-left   { color: #1A5C2E; }
+.val-center { color: #8B6000; }
+.val-right  { color: #C41E2A; }
+.val-real   { color: #1A5C2E; }
+.val-fake   { color: #C41E2A; }
+.sent-pos   { color: #1A5C2E; }
+.sent-neg   { color: #C41E2A; }
+ 
+/* Bias stamp */
+.bias-stamp {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 6px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid;
+  display: inline-block;
+}
+.stamp-left   { color: #1A5C2E; border-color: #1A5C2E; background: #EEF6F1; }
+.stamp-center { color: #8B6000; border-color: #8B6000; background: #FDF8EC; }
+.stamp-right  { color: #C41E2A; border-color: #C41E2A; background: #FDF0F1; }
+ 
+/* Verdict */
+.verdict-box {
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  border: 2px solid #C8C2AE;
+  display: none;
+}
+.verdict-box.real { border-color: #1A5C2E; background: #EEF6F1; }
+.verdict-box.fake { border-color: #C41E2A; background: #FDF0F1; }
+.verdict-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+}
+.verdict-box.real .verdict-title { color: #1A5C2E; }
+.verdict-box.fake .verdict-title { color: #C41E2A; }
+.verdict-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: #7A7660;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+ 
+/* Compare */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid #C8C2AE;
+  margin-bottom: 16px;
+}
+.compare-col {
+  padding: 16px;
+  border-right: 1px solid #C8C2AE;
+}
+.compare-col:last-child { border-right: none; }
+.compare-headline {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #4A4838;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #C8C2AE;
+  line-height: 1.4;
+  min-height: 36px;
+}
+.compare-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid #C8C2AE;
+}
+.compare-mini-cell {
+  padding: 10px 12px;
+  border-right: 1px solid #C8C2AE;
+}
+.compare-mini-cell:last-child { border-right: none; }
+</style>
+</head>
+<body>
+ 
+<div id="root"></div>
+ 
+<script>
+const MODE = "__MODE__";
+const BIAS_PRED = __BIAS_PRED__;
+const FAKE_PRED = __FAKE_PRED__;
+const BIAS_PRED_A = __BIAS_PRED_A__;
+const QUERY = "__QUERY__";
+const QA = "__QA__";
+ 
+const C = { left: '#1A5C2E', center: '#8B6000', right: '#C41E2A' };
+ 
+function sentLabel(s) { return s > 0.05 ? 'POSITIVE' : s < -0.05 ? 'NEGATIVE' : 'NEUTRAL'; }
+function sentColor(s) { return s > 0.05 ? C.left : s < -0.05 ? C.right : '#7A7660'; }
+ 
+function renderClassify() {
+  const root = document.getElementById('root');
+  if (!BIAS_PRED || !BIAS_PRED.bias) {
+    root.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-title">Awaiting analysis</div>
+        <div class="empty-sub">Enter a headline above and click Analyze</div>
+      </div>`;
+    return;
+  }
+ 
+  const p = BIAS_PRED;
+  root.innerHTML = `
+    <div class="result-row">
+      <div class="result-cell">
+        <div class="result-tag">Bias Classification</div>
+        <div class="result-val val-${p.bias}">${p.bias.toUpperCase()}</div>
+        <div class="result-sub">predicted label</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-tag">Model Confidence</div>
+        <div class="result-val">${Math.round(p.confidence*100)}%</div>
+        <div class="conf-rail"><div class="conf-fill" style="width:${Math.round(p.confidence*100)}%"></div></div>
+        <div class="result-sub">certainty score</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-tag">Sentiment</div>
+        <div class="result-val" style="color:${sentColor(p.sentiment)}">${sentLabel(p.sentiment)}</div>
+        <div class="result-sub">score: ${p.sentiment.toFixed(3)}</div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-label">Confidence per class</div>
+      <div style="position:relative;height:120px"><canvas id="confChart"></canvas></div>
+    </div>`;
+ 
+  Chart.defaults.font.family = "'DM Mono', monospace";
+  Chart.defaults.font.size = 10;
+  Chart.defaults.color = '#7A7660';
+ 
+  new Chart(document.getElementById('confChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Center', 'Left', 'Right'],
+      datasets: [{ data: [p.probs.center, p.probs.left, p.probs.right], backgroundColor: [C.center, C.left, C.right], borderRadius: 0, borderSkipped: false }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { min: 0, max: 1, grid: { color: '#E8E4D8' }, border: { display: false }, ticks: { callback: v => (v*100).toFixed(0)+'%' } }
+      },
+      maintainAspectRatio: false
+    }
+  });
+}
+ 
+function renderFake() {
+  const root = document.getElementById('root');
+  if (!FAKE_PRED || !FAKE_PRED.label) {
+    root.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-title">Awaiting verification</div>
+        <div class="empty-sub">Enter a headline above and click Verify</div>
+      </div>`;
+    return;
+  }
+ 
+  const fp = FAKE_PRED;
+  const bp = BIAS_PRED;
+  const isReal = fp.label === 'real';
+ 
+  root.innerHTML = `
+    <div class="verdict-box ${fp.label}" id="verdict">
+      <div class="verdict-title">${isReal ? 'VERIFIED REAL' : 'LIKELY FAKE'}</div>
+      <div class="verdict-sub">Confidence: ${Math.round(fp.confidence*100)}% · ${isReal ? 'Consistent with legitimate journalism patterns' : 'Consistent with disinformation patterns'}</div>
+    </div>
+    <div class="result-row">
+      <div class="result-cell">
+        <div class="result-tag">Verdict</div>
+        <div class="result-val val-${fp.label}">${fp.label.toUpperCase()}</div>
+        <div class="result-sub">${isReal ? 'authentic' : 'fabricated'}</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-tag">Confidence</div>
+        <div class="result-val">${Math.round(fp.confidence*100)}%</div>
+        <div class="conf-rail"><div class="conf-fill" style="width:${Math.round(fp.confidence*100)}%"></div></div>
+        <div class="result-sub">certainty score</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-tag">Bias (if real)</div>
+        <div class="result-val val-${bp && bp.bias ? bp.bias : 'center'}">${bp && bp.bias ? bp.bias.toUpperCase() : '--'}</div>
+        <div class="result-sub">political leaning</div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-label">Fake vs Real probability</div>
+      <div style="position:relative;height:120px"><canvas id="fakeChart"></canvas></div>
+    </div>`;
+ 
+  document.getElementById('verdict').style.display = 'block';
+ 
+  Chart.defaults.font.family = "'DM Mono', monospace";
+  Chart.defaults.font.size = 10;
+  Chart.defaults.color = '#7A7660';
+ 
+  new Chart(document.getElementById('fakeChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Fake', 'Real'],
+      datasets: [{ data: [fp.probs.fake, fp.probs.real], backgroundColor: [C.right, C.left], borderRadius: 0, borderSkipped: false }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { min: 0, max: 1, grid: { color: '#E8E4D8' }, border: { display: false }, ticks: { callback: v => (v*100).toFixed(0)+'%' } }
+      },
+      maintainAspectRatio: false
+    }
+  });
+}
+ 
+function renderCompare() {
+  const root = document.getElementById('root');
+  if (!BIAS_PRED_A || !BIAS_PRED_A.bias || !BIAS_PRED || !BIAS_PRED.bias) {
+    root.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-title">Awaiting comparison</div>
+        <div class="empty-sub">Enter two headlines above and click Compare</div>
+      </div>`;
+    return;
+  }
+ 
+  const a = BIAS_PRED_A, b = BIAS_PRED;
+ 
+  root.innerHTML = `
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="result-tag" style="margin-bottom:8px">Headline A</div>
+        <div class="compare-headline">${QA || '--'}</div>
+        <div class="compare-mini">
+          <div class="compare-mini-cell">
+            <div class="result-tag">Bias</div>
+            <div class="result-val val-${a.bias}" style="font-size:20px">${a.bias.toUpperCase()}</div>
+          </div>
+          <div class="compare-mini-cell">
+            <div class="result-tag">Sentiment</div>
+            <div class="result-val" style="font-size:20px;color:${sentColor(a.sentiment)}">${sentLabel(a.sentiment)}</div>
+            <div class="result-sub">${a.sentiment.toFixed(3)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-col">
+        <div class="result-tag" style="margin-bottom:8px">Headline B</div>
+        <div class="compare-headline">${QUERY || '--'}</div>
+        <div class="compare-mini">
+          <div class="compare-mini-cell">
+            <div class="result-tag">Bias</div>
+            <div class="result-val val-${b.bias}" style="font-size:20px">${b.bias.toUpperCase()}</div>
+          </div>
+          <div class="compare-mini-cell">
+            <div class="result-tag">Sentiment</div>
+            <div class="result-val" style="font-size:20px;color:${sentColor(b.sentiment)}">${sentLabel(b.sentiment)}</div>
+            <div class="result-sub">${b.sentiment.toFixed(3)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-label">Side-by-side — sentiment and confidence</div>
+      <div style="position:relative;height:160px"><canvas id="cmpChart"></canvas></div>
+    </div>`;
+ 
+  Chart.defaults.font.family = "'DM Mono', monospace";
+  Chart.defaults.font.size = 10;
+  Chart.defaults.color = '#7A7660';
+ 
+  new Chart(document.getElementById('cmpChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Sentiment', 'Confidence'],
+      datasets: [
+        { label: 'Headline A', data: [a.sentiment, a.confidence], backgroundColor: C.left, borderRadius: 0, borderSkipped: false },
+        { label: 'Headline B', data: [b.sentiment, b.confidence], backgroundColor: C.right, borderRadius: 0, borderSkipped: false }
+      ]
+    },
+    options: {
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, padding: 12 } } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { min: -1, max: 1, grid: { color: '#E8E4D8' }, border: { display: false } }
+      },
+      maintainAspectRatio: false
+    }
+  });
+}
+ 
+// Render based on mode
+if (MODE === 'classify') renderClassify();
+else if (MODE === 'fakenews') renderFake();
+else if (MODE === 'compare') renderCompare();
+</script>
+</body>
+</html>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

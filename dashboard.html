@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VERITAS — News Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script type="module">
+  import { computePosition, flip, shift, offset, arrow } from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.3/+esm';
+  window.FloatingUI = { computePosition, flip, shift, offset, arrow };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  html, body {
+  background: #F2EFE6 !important;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --ink: #0A0A08;
+  --paper: #F2EFE6;
+  --paper-2: #E8E4D8;
+  --paper-3: #DDD8C8;
+  --rule: #C8C2AE;
+  --rule-strong: #9E9780;
+  --text: #1A1910;
+  --text-2: #4A4838;
+  --text-3: #7A7660;
+  --red: #C41E2A;
+  --red-dim: #8B1520;
+  --red-bg: #FDF0F1;
+  --green: #1A5C2E;
+  --green-bg: #EEF6F1;
+  --amber: #8B6000;
+  --amber-bg: #FDF8EC;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'Syne', sans-serif;
+  --mono: 'DM Mono', 'Courier New', monospace;
+  --r: 2px;
+  --r-md: 4px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 13px;
+  line-height: 1.5;
+  /* Subtle newsprint texture */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 24px,
+      rgba(0,0,0,0.03) 24px,
+      rgba(0,0,0,0.03) 25px
+    );
+}
+
+/* ── Page load animation ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes ticker {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(-200%); }
+}
+
+.anim-1 { animation: fadeUp 0.5s ease both; }
+.anim-2 { animation: fadeUp 0.5s 0.08s ease both; }
+.anim-3 { animation: fadeUp 0.5s 0.16s ease both; }
+.anim-4 { animation: fadeUp 0.5s 0.24s ease both; }
+.anim-5 { animation: fadeUp 0.5s 0.32s ease both; }
+.anim-6 { animation: fadeUp 0.5s 0.40s ease both; }
+
+/* ── Layout ── */
+.layout {
+  display: block;
+}
+.main {
+  padding: 0;
+}
+
+/* ── Masthead ── */
+.masthead {
+  grid-column: 1 / -1;
+  border-bottom: 3px double var(--rule-strong);
+  padding: 0;
+  animation: fadeUp 0.4s ease both;
+}
+
+.masthead-top {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+}
+
+.masthead-brand {
+  padding: 10px 20px;
+  border-right: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-family: var(--serif);
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.brand-title em {
+  font-style: italic;
+  color: var(--red);
+}
+
+.brand-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.masthead-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.mstat {
+  padding: 8px 16px;
+  border-right: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.mstat-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.mstat-value {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.mstat-value.red { color: var(--red); }
+.mstat-value.green { color: var(--green); }
+.mstat-value.amber { color: var(--amber); }
+
+.masthead-time {
+  margin-left: auto;
+  padding: 8px 20px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.time-display {
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+}
+
+.time-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* Ticker */
+.ticker {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 5px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticker-inner {
+  display: inline-block;
+  animation: ticker 90s linear infinite;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.ticker-sep {
+  margin: 0 20px;
+  color: var(--red);
+  opacity: 0.8;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  animation: slideIn 0.4s ease both;
+}
+
+.nav-header {
+  padding: 12px 14px 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.nav-header-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
+  transition: background 0.1s;
+  letter-spacing: 0.02em;
+}
+
+.nav-item:hover { background: var(--paper-2); color: var(--text); }
+
+.nav-item.active {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.nav-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  min-width: 16px;
+}
+
+.nav-item.active .nav-num { color: var(--rule); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid var(--rule);
+}
+
+.sidebar-footer-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.model-badge {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.accuracy-bar {
+  height: 3px;
+  background: var(--rule);
+  border-radius: 0;
+  margin: 4px 0;
+  overflow: hidden;
+}
+
+.accuracy-fill {
+  height: 100%;
+  background: var(--ink);
+}
+
+/* ── Main ── */
+.main { padding: 20px 24px; overflow-y: auto; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Section headers ── */
+.section-rule {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.section-deck {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ── Metrics grid ── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--rule-strong);
+  margin-bottom: 20px;
+}
+
+.metric-cell {
+  padding: 14px 16px;
+  border-right: 1px solid var(--rule-strong);
+  cursor: default;
+  transition: background 0.1s;
+}
+
+.metric-cell:last-child { border-right: none; }
+.metric-cell:hover { background: var(--paper-2); }
+
+.metric-tag {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.metric-num {
+  font-family: var(--serif);
+  font-size: 32px;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.metric-num.bias-left  { color: var(--green); }
+.metric-num.bias-right { color: var(--red); }
+.metric-num.bias-center { color: var(--amber); }
+
+.metric-caption {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+/* ── Charts ── */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
+  margin-bottom: 20px;
+}
+
+.chart-panel {
+  padding: 16px;
+}
+
+.chart-panel:first-child {
+  border-right: 1px solid var(--rule-strong);
+}
+
+.chart-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.chart-panel-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.chart-panel-sub {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-2);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 3px;
+}
+
+/* ── Timeline ── */
+.timeline-panel {
+  border: 1px solid var(--rule-strong);
+  border-top: none;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+/* ── Headlines table ── */
+.headlines-panel {
+  border: 1px solid var(--rule-strong);
+  margin-bottom: 20px;
+}
+
+.headlines-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper-2);
+}
+
+.headlines-toolbar-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.filter-group { display: flex; gap: 0; }
+
+.filter-chip {
+  padding: 3px 10px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--rule-strong);
+  border-right: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-2);
+  transition: all 0.1s;
+}
+
+.filter-chip:last-child { border-right: 1px solid var(--rule-strong); }
+.filter-chip:hover { background: var(--paper-3); }
+.filter-chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.headline-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  transition: background 0.08s;
+}
+
+.headline-row:last-child { border-bottom: none; }
+.headline-row:hover { background: var(--paper-2); }
+
+.hl-index {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  min-width: 20px;
+  flex-shrink: 0;
+}
+
+.hl-text {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.hl-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.hl-source {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.bias-stamp {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 500;
+  padding: 1px 5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+.stamp-left   { color: var(--green);   border-color: var(--green);   background: var(--green-bg); }
+.stamp-center { color: var(--amber);   border-color: var(--amber);   background: var(--amber-bg); }
+.stamp-right  { color: var(--red);     border-color: var(--red);     background: var(--red-bg); }
+
+.hl-sent {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  min-width: 38px;
+  text-align: right;
+}
+
+.sent-neg { color: var(--red); }
+.sent-pos { color: var(--green); }
+
+/* ── Classifier ── */
+.classifier-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
+}
+
+.classifier-main {
+  padding: 20px;
+  border-right: 1px solid var(--rule-strong);
+}
+
+.classify-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.classify-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: var(--serif);
+  font-size: 16px;
+  border: 1px solid var(--rule-strong);
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+  margin-bottom: 10px;
+}
+
+.classify-input:focus {
+  border-bottom-color: var(--red);
+  background: var(--paper-2);
+}
+
+.classify-input::placeholder {
+  color: var(--rule-strong);
+  font-style: italic;
+}
+
+.submit-btn {
+  padding: 8px 20px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.12s;
+  margin-bottom: 20px;
+}
+
+.submit-btn:hover { background: var(--red); }
+.submit-btn:active { transform: translateY(1px); }
+
+.result-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--rule-strong);
+  margin-bottom: 16px;
+}
+
+.result-cell {
+  padding: 12px 14px;
+  border-right: 1px solid var(--rule-strong);
+}
+
+.result-cell:last-child { border-right: none; }
+
+.result-tag {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.result-val {
+  font-family: var(--serif);
+  font-size: 24px;
+  color: var(--text-3);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.result-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+.conf-rail {
+  height: 2px;
+  background: var(--rule);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.conf-fill {
+  height: 100%;
+  background: var(--ink);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Classifier sidebar */
+.classifier-sidebar {
+  padding: 16px;
+  background: var(--paper-2);
+}
+
+.sidebar-block {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sidebar-block:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.sidebar-block-title {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.guide-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.guide-row:last-child { margin-bottom: 0; }
+
+.guide-text {
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.stat-row:last-child { border-bottom: none; }
+.stat-key { font-family: var(--mono); font-size: 9px; color: var(--text-3); }
+.stat-val { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--ink); }
+
+.try-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 11px;
+  color: var(--text-2);
+  cursor: pointer;
+  margin-bottom: 5px;
+  transition: all 0.1s;
+  line-height: 1.3;
+}
+
+.try-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* ── Verdict indicator (fake news) ── */
+.verdict-panel {
+  border: 2px solid var(--rule-strong);
+  padding: 16px;
+  margin-bottom: 16px;
+  display: none;
+  animation: fadeUp 0.3s ease both;
+}
+
+.verdict-panel.visible { display: block; }
+.verdict-panel.real { border-color: var(--green); background: var(--green-bg); }
+.verdict-panel.fake { border-color: var(--red); background: var(--red-bg); }
+
+.verdict-headline {
+  font-family: var(--serif);
+  font-size: 28px;
+  letter-spacing: -0.01em;
+}
+
+.verdict-headline.real { color: var(--green); }
+.verdict-headline.fake { color: var(--red); }
+
+.verdict-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+/* ── Compare ── */
+.compare-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
+  margin-bottom: 0;
+}
+
+.compare-col {
+  padding: 16px;
+}
+
+.compare-col:first-child { border-right: 1px solid var(--rule-strong); }
+
+.compare-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.compare-results {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
+  border-top: none;
+  margin-bottom: 20px;
+}
+
+.compare-result-col {
+  padding: 16px;
+  border-right: 1px solid var(--rule-strong);
+}
+
+.compare-result-col:last-child { border-right: none; }
+
+.compare-preview {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+  line-height: 1.4;
+  min-height: 40px;
+}
+
+.compare-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule);
+}
+
+.compare-mini-cell {
+  padding: 8px 10px;
+  border-right: 1px solid var(--rule);
+}
+
+.compare-mini-cell:last-child { border-right: none; }
+
+.compare-chart-panel {
+  border: 1px solid var(--rule-strong);
+  border-top: none;
+  padding: 16px;
+}
+
+/* ── Floating elements ── */
+#floating-tooltip {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 6px 10px;
+  max-width: 180px;
+  line-height: 1.4;
+  pointer-events: none;
+  letter-spacing: 0.04em;
+}
+
+#headline-popover {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-top: 3px solid var(--red);
+  padding: 12px 14px;
+  max-width: 320px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+#source-dropdown {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  min-width: 130px;
+  box-shadow: 3px 3px 0 var(--rule-strong);
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 12px;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  background: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.dropdown-item:last-child { border-bottom: none; }
+.dropdown-item:hover { background: var(--ink); color: var(--paper); }
+
+/* ── Source filter btn ── */
+.source-btn {
+  padding: 3px 10px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--rule-strong);
+  background: none;
+  cursor: pointer;
+  color: var(--text-2);
+  margin-left: 6px;
+}
+
+.source-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- Floating tooltip -->
+<div id="floating-tooltip"><div id="tt-content"></div></div>
+
+<!-- Headline popover -->
+<div id="headline-popover">
+  <div style="font-family:var(--mono);font-size:8px;color:var(--red);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:6px">ANALYSIS</div>
+  <div id="pop-text" style="font-family:var(--serif);font-size:13px;color:var(--ink);line-height:1.4;margin-bottom:10px"></div>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span id="pop-source" style="font-family:var(--mono);font-size:8px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.1em"></span>
+    <span id="pop-bias" class="bias-stamp"></span>
+    <span id="pop-sent" style="font-family:var(--mono);font-size:9px;color:var(--text-3)"></span>
+  </div>
+</div>
+
+<!-- Source dropdown -->
+<div id="source-dropdown"><div id="source-dropdown-items"></div></div>
+
+<div class="layout">
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <div class="masthead-top">
+      <div class="masthead-brand">
+        <div class="brand-title">VERI<em>TAS</em></div>
+        <div class="brand-sub">News Intelligence System · v2.1</div>
+      </div>
+      <div class="masthead-stats">
+        <div class="mstat">
+          <div class="mstat-label">Corpus</div>
+          <div class="mstat-value" id="ms-total">--</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Left</div>
+          <div class="mstat-value green" id="ms-left">--</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Center</div>
+          <div class="mstat-value amber" id="ms-center">--</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Right</div>
+          <div class="mstat-value red" id="ms-right">--</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Bias Acc.</div>
+          <div class="mstat-value">77.4%</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Fake Acc.</div>
+          <div class="mstat-value">98.7%</div>
+        </div>
+      </div>
+      <div class="masthead-time">
+        <div class="time-display" id="clock">--:--:--</div>
+        <div class="time-label">System Time</div>
+      </div>
+    </div>
+    <div class="ticker">
+      <span class="ticker-inner" id="ticker-text">Loading feed...</span>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-rule anim-1">
+        <div class="section-title">Intelligence Overview</div>
+        <div class="section-deck">Real-time corpus analysis</div>
+      </div>
+
+      <div class="metrics-grid anim-2">
+        <div class="metric-cell" data-tip="Total headlines in the corpus across all monitored sources">
+          <div class="metric-tag">Total Headlines</div>
+          <div class="metric-num" id="m-total">--</div>
+          <div class="metric-caption" id="m-total-cap">across sources</div>
+        </div>
+        <div class="metric-cell" data-tip="Headlines classified as left-leaning by fine-tuned DistilBERT">
+          <div class="metric-tag">Left Leaning</div>
+          <div class="metric-num bias-left" id="m-left">--</div>
+          <div class="metric-caption" id="m-left-cap">of corpus</div>
+        </div>
+        <div class="metric-cell" data-tip="Headlines classified as politically center">
+          <div class="metric-tag">Center</div>
+          <div class="metric-num bias-center" id="m-center">--</div>
+          <div class="metric-caption" id="m-center-cap">of corpus</div>
+        </div>
+        <div class="metric-cell" data-tip="Headlines classified as right-leaning by fine-tuned DistilBERT">
+          <div class="metric-tag">Right Leaning</div>
+          <div class="metric-num bias-right" id="m-right">--</div>
+          <div class="metric-caption" id="m-right-cap">of corpus</div>
+        </div>
+      </div>
+
+      <div class="charts-row anim-3">
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">Bias Distribution</div>
+            <div class="chart-panel-sub">By classification</div>
+          </div>
+          <div style="position:relative;height:160px"><canvas id="donutChart"></canvas></div>
+          <div class="chart-legend" id="donut-legend">
+            <div class="legend-item"><div class="legend-swatch" style="background:var(--green)"></div>Left</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:var(--amber)"></div>Center</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:var(--red)"></div>Right</div>
+          </div>
+        </div>
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">Avg. Sentiment by Source</div>
+            <div class="chart-panel-sub">VADER compound</div>
+          </div>
+          <div style="position:relative;height:160px"><canvas id="sentChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="timeline-panel anim-4">
+        <div class="chart-panel-header">
+          <div class="chart-panel-title">Sentiment Timeline</div>
+          <div class="chart-panel-sub" id="tl-legend-inline">Daily average per source</div>
+        </div>
+        <div style="position:relative;height:150px"><canvas id="tlChart"></canvas></div>
+      </div>
+
+      <div class="headlines-panel anim-5">
+        <div class="headlines-toolbar">
+          <div class="headlines-toolbar-title">Recent Headlines</div>
+          <div style="display:flex;align-items:center">
+            <div class="filter-group">
+              <button class="filter-chip active" onclick="filterHL('all',this)">All</button>
+              <button class="filter-chip" onclick="filterHL('left',this)">Left</button>
+              <button class="filter-chip" onclick="filterHL('center',this)">Ctr</button>
+              <button class="filter-chip" onclick="filterHL('right',this)">Right</button>
+            </div>
+            <button class="source-btn" id="src-btn" onclick="toggleSrcDrop(this)">Source ▾</button>
+          </div>
+        </div>
+        <div id="hl-list"></div>
+      </div>
+    </div>
+
+    <!-- Classify -->
+    <div class="page" id="page-classify">
+      <div class="section-rule anim-1">
+        <div class="section-title">Bias Analysis</div>
+        <div class="section-deck">DistilBERT · 77.4% accuracy · 3-class</div>
+      </div>
+
+      <div class="classifier-layout anim-2">
+        <div class="classifier-main">
+          <div class="result-row">
+            <div class="result-cell">
+              <div class="result-tag">Bias Classification</div>
+              <div class="result-val" id="res-bias">--</div>
+              <div class="result-sub" id="res-bias-sub">awaiting input</div>
+            </div>
+            <div class="result-cell">
+              <div class="result-tag">Model Confidence</div>
+              <div class="result-val" id="res-conf">--</div>
+              <div class="conf-rail"><div class="conf-fill" id="res-conf-bar" style="width:0%"></div></div>
+              <div class="result-sub">certainty score</div>
+            </div>
+            <div class="result-cell">
+              <div class="result-tag">Sentiment</div>
+              <div class="result-val" id="res-sent">--</div>
+              <div class="result-sub" id="res-sent-sub">VADER compound</div>
+            </div>
+          </div>
+          <div style="position:relative;height:130px"><canvas id="confChart"></canvas></div>
+        </div>
+
+        <div class="classifier-sidebar">
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Classification Guide</div>
+            <div class="guide-row"><span class="bias-stamp stamp-left">LEFT</span><div class="guide-text">Climate, inequality, social policy. Guardian, NPR register.</div></div>
+            <div class="guide-row"><span class="bias-stamp stamp-center">CENTER</span><div class="guide-text">Neutral international reporting. BBC, AlJazeera register.</div></div>
+            <div class="guide-row"><span class="bias-stamp stamp-right">RIGHT</span><div class="guide-text">Policy critique, security. FoxNews register.</div></div>
+          </div>
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Model Performance</div>
+            <div class="stat-row"><span class="stat-key">Architecture</span><span class="stat-val">DistilBERT</span></div>
+            <div class="stat-row"><span class="stat-key">Accuracy</span><span class="stat-val">77.36%</span></div>
+            <div class="stat-row"><span class="stat-key">Macro F1</span><span class="stat-val">0.76</span></div>
+            <div class="stat-row"><span class="stat-key">Left F1</span><span class="stat-val">0.69</span></div>
+            <div class="stat-row"><span class="stat-key">Right F1</span><span class="stat-val">0.76</span></div>
+            <div class="stat-row"><span class="stat-key">Train size</span><span class="stat-val">423</span></div>
+          </div>
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Sample Headlines</div>
+            <button class="try-btn" onclick="setClassify('Trump threatens new tariffs on European goods amid trade war escalation')">"Trump threatens new tariffs on European goods..."</button>
+            <button class="try-btn" onclick="setClassify('Climate activists protest outside parliament demanding immediate action')">"Climate activists protest outside parliament..."</button>
+            <button class="try-btn" onclick="setClassify('UN Security Council votes on new Gaza ceasefire resolution')">"UN Security Council votes on Gaza ceasefire..."</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare -->
+    <div class="page" id="page-compare">
+      <div class="section-rule anim-1">
+        <div class="section-title">Comparative Analysis</div>
+        <div class="section-deck">Side-by-side bias and sentiment comparison</div>
+      </div>
+
+      <div class="compare-inputs anim-2">
+        <div class="compare-col">
+            <div class="compare-col">
+  <div class="compare-label">Headline A</div>
+  <input class="classify-input" id="cmp-a" type="text" placeholder="First headline..."/>
+</div>
+      <div class="compare-results anim-3">
+        <div class="compare-result-col">
+          <div class="compare-mini-grid">
+            <div class="compare-mini-cell">
+              <div class="result-tag">Bias</div>
+              <div class="result-val" id="cmp-a-bias" style="font-size:18px;color:var(--text-3)">--</div>
+            </div>
+            <div class="compare-mini-cell">
+              <div class="result-tag">Sentiment</div>
+              <div class="result-val" id="cmp-a-sent" style="font-size:18px;color:var(--text-3)">--</div>
+              <div class="result-sub" id="cmp-a-sent-sub"></div>
+            </div>
+          </div>
+        </div>
+            <div class="compare-mini-cell">
+              <div class="result-tag">Sentiment</div>
+              <div class="result-val" id="cmp-b-sent" style="font-size:18px;color:var(--text-3)">--</div>
+              <div class="result-sub" id="cmp-b-sent-sub"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-chart-panel anim-4">
+        <div class="chart-panel-header">
+          <div class="chart-panel-title">Side-by-side</div>
+          <div class="chart-panel-sub">Sentiment and confidence</div>
+        </div>
+        <div style="position:relative;height:180px"><canvas id="cmpChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Fake News -->
+    <div class="page" id="page-fakenews">
+      <div class="section-rule anim-1">
+        <div class="section-title">Authenticity Verification</div>
+        <div class="section-deck">DistilBERT · 98.7% accuracy · ISOT dataset · 44,898 samples</div>
+      </div>
+
+      <div class="classifier-layout anim-2">
+        <div class="classifier-main">
+          <div class="verdict-panel" id="verdict-panel">
+            <div class="verdict-headline" id="verdict-text">--</div>
+            <div class="verdict-sub" id="verdict-sub">--</div>
+          </div>
+
+
+          <div class="result-row">
+            <div class="result-cell">
+              <div class="result-tag">Verdict</div>
+              <div class="result-val" id="fake-label">--</div>
+              <div class="result-sub" id="fake-label-sub">awaiting input</div>
+            </div>
+            <div class="result-cell">
+              <div class="result-tag">Confidence</div>
+              <div class="result-val" id="fake-conf">--</div>
+              <div class="conf-rail"><div class="conf-fill" id="fake-conf-bar" style="width:0%"></div></div>
+              <div class="result-sub">model certainty</div>
+            </div>
+            <div class="result-cell">
+              <div class="result-tag">Bias (if real)</div>
+              <div class="result-val" id="fake-bias">--</div>
+              <div class="result-sub">political leaning</div>
+            </div>
+          </div>
+          <div style="position:relative;height:130px"><canvas id="fakeChart"></canvas></div>
+        </div>
+
+        <div class="classifier-sidebar">
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">How It Works</div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.6">
+              Fine-tuned on the ISOT Fake News Dataset — 21,417 verified real articles and 23,481 fabricated articles. The model identifies linguistic signatures of disinformation: sensationalist framing, unverifiable claims, and emotional manipulation.
+            </div>
+          </div>
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Model Performance</div>
+            <div class="stat-row"><span class="stat-key">Architecture</span><span class="stat-val">DistilBERT</span></div>
+            <div class="stat-row"><span class="stat-key">Accuracy</span><span class="stat-val">98.71%</span></div>
+            <div class="stat-row"><span class="stat-key">Macro F1</span><span class="stat-val">0.99</span></div>
+            <div class="stat-row"><span class="stat-key">Fake precision</span><span class="stat-val">0.99</span></div>
+            <div class="stat-row"><span class="stat-key">Real precision</span><span class="stat-val">0.98</span></div>
+            <div class="stat-row"><span class="stat-key">Train size</span><span class="stat-val">35,918</span></div>
+          </div>
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Sample Headlines</div>
+            <button class="try-btn" onclick="setFake('Scientists discover that drinking coffee cures all forms of cancer')">"Scientists discover coffee cures all cancers..."</button>
+            <button class="try-btn" onclick="setFake('Federal Reserve raises interest rates by 0.25 percent amid inflation concerns')">"Federal Reserve raises rates amid inflation..."</button>
+            <button class="try-btn" onclick="setFake('Obama secretly funded ISIS according to documents found in basement')">"Obama secretly funded ISIS, documents show..."</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const APP_DATA  = __APP_DATA__;
+const BIAS_PRED = __BIAS_PRED__;
+const FAKE_PRED = __FAKE_PRED__;
+const BIAS_PRED_A = __BIAS_PRED_A__;
+
+const C = {
+  ink: '#0A0A08', paper: '#F2EFE6',
+  left: '#1A5C2E', center: '#8B6000', right: '#C41E2A',
+  rule: '#C8C2AE',
+  sources: {
+    BBC: '#1A5C2E', FoxNews: '#C41E2A', TheGuardian: '#5C3317',
+    NPR: '#8B6000', AlJazeera: '#003366'
+  }
+};
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toTimeString().slice(0,8);
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// Populate masthead + metrics
+const left = APP_DATA.bias_counts.left || 0;
+const center = APP_DATA.bias_counts.center || 0;
+const right = APP_DATA.bias_counts.right || 0;
+const total = APP_DATA.total;
+
+document.getElementById('ms-total').textContent = total;
+document.getElementById('ms-left').textContent = left;
+document.getElementById('ms-center').textContent = center;
+document.getElementById('ms-right').textContent = right;
+document.getElementById('m-total').textContent = total;
+document.getElementById('m-total-cap').textContent = `across ${APP_DATA.sources} sources`;
+document.getElementById('m-left').textContent = left;
+document.getElementById('m-left-cap').textContent = `${(left/total*100).toFixed(1)}% of corpus`;
+document.getElementById('m-center').textContent = center;
+document.getElementById('m-center-cap').textContent = `${(center/total*100).toFixed(1)}% of corpus`;
+document.getElementById('m-right').textContent = right;
+document.getElementById('m-right-cap').textContent = `${(right/total*100).toFixed(1)}% of corpus`;
+
+// Ticker
+const tickerItems = APP_DATA.headlines.slice(0, 8).map(h =>
+  `<span class="ticker-sep">◆</span> ${h.headline} [${h.source.toUpperCase()}]`
+).join('');
+document.getElementById('ticker-text').innerHTML = tickerItems;
+
+// Headlines
+let hlFilter = 'all', hlSource = 'all';
+
+function renderHL() {
+  let data = APP_DATA.headlines;
+  if (hlFilter !== 'all') data = data.filter(h => h.bias_label === hlFilter);
+  if (hlSource !== 'all') data = data.filter(h => h.source.toLowerCase() === hlSource.toLowerCase());
+
+  document.getElementById('hl-list').innerHTML = data.slice(0, 20).map((h, i) => `
+    <div class="headline-row" data-i="${i}">
+      <span class="hl-index">${String(i+1).padStart(2,'0')}</span>
+      <span class="hl-text">${h.headline}</span>
+      <div class="hl-meta">
+        <span class="hl-source">${h.source}</span>
+        <span class="bias-stamp stamp-${h.bias_label}">${h.bias_label}</span>
+        <span class="hl-sent ${h.sentiment < -0.05 ? 'sent-neg' : h.sentiment > 0.05 ? 'sent-pos' : ''}">
+          ${parseFloat(h.sentiment) > 0 ? '+' : ''}${parseFloat(h.sentiment).toFixed(2)}
+        </span>
+      </div>
+    </div>`).join('');
+
+  document.querySelectorAll('.headline-row').forEach((row, i) => {
+    const h = data[i]; if (!h) return;
+    row.addEventListener('mouseenter', () => showPop(row, h));
+    row.addEventListener('mouseleave', () => setTimeout(hidePop, 300));
+  });
+}
+
+function filterHL(f, btn) {
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  hlFilter = f; renderHL();
+}
+
+renderHL();
+
+// Charts
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.font.size = 10;
+Chart.defaults.color = '#7A7660';
+
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Left', 'Center', 'Right'],
+    datasets: [{ data: [left, center, right], backgroundColor: [C.left, C.center, C.right], borderWidth: 2, borderColor: '#F2EFE6', hoverOffset: 3 }]
+  },
+  options: {
+    cutout: '65%',
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} (${(ctx.raw/total*100).toFixed(1)}%)` }, bodyFont: { family: 'DM Mono' } } },
+    maintainAspectRatio: false
+  }
+});
+
+const sentSrcs = Object.keys(APP_DATA.sentiment_by_source);
+const sentVals = Object.values(APP_DATA.sentiment_by_source);
+new Chart(document.getElementById('sentChart'), {
+  type: 'bar',
+  data: {
+    labels: sentSrcs,
+    datasets: [{ data: sentVals, backgroundColor: sentSrcs.map(s => C.sources[s] || C.ink), borderRadius: 0, borderSkipped: false }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: '#E8E4D8' }, border: { display: false }, ticks: { callback: v => v.toFixed(2) } },
+      y: { grid: { display: false }, border: { display: false } }
+    },
+    maintainAspectRatio: false
+  }
+});
+
+const allDates = [...new Set(Object.values(APP_DATA.timeline).flatMap(d => d.dates))].sort();
+new Chart(document.getElementById('tlChart'), {
+  type: 'line',
+  data: {
+    labels: allDates,
+    datasets: Object.entries(APP_DATA.timeline).map(([src, d]) => ({
+      label: src,
+      data: allDates.map(dt => { const i = d.dates.indexOf(dt); return i >= 0 ? d.values[i] : null; }),
+      borderColor: C.sources[src] || C.ink,
+      tension: 0.4, pointRadius: 2, borderWidth: 1.5, fill: false, spanGaps: true
+    }))
+  },
+  options: {
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, padding: 12, font: { family: 'DM Mono', size: 9 } } } },
+    scales: {
+      x: { grid: { display: false }, border: { display: false } },
+      y: { grid: { color: '#E8E4D8' }, border: { display: false }, ticks: { callback: v => v.toFixed(2) } }
+    },
+    maintainAspectRatio: false
+  }
+});
+
+let confChart = new Chart(document.getElementById('confChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Center', 'Left', 'Right'],
+    datasets: [{ data: [0,0,0], backgroundColor: [C.center, C.left, C.right], borderRadius: 0, borderSkipped: false }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, border: { display: false } },
+      y: { min: 0, max: 1, grid: { color: '#E8E4D8' }, border: { display: false }, ticks: { callback: v => (v*100).toFixed(0)+'%' } }
+    },
+    maintainAspectRatio: false
+  }
+});
+
+let cmpChart = new Chart(document.getElementById('cmpChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Sentiment', 'Confidence'],
+    datasets: [
+      { label: 'Headline A', data: [0,0], backgroundColor: C.left, borderRadius: 0, borderSkipped: false },
+      { label: 'Headline B', data: [0,0], backgroundColor: C.right, borderRadius: 0, borderSkipped: false }
+    ]
+  },
+  options: {
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, padding: 12, font: { family: 'DM Mono', size: 9 } } } },
+    scales: {
+      x: { grid: { display: false }, border: { display: false } },
+      y: { min: -1, max: 1, grid: { color: '#E8E4D8' }, border: { display: false } }
+    },
+    maintainAspectRatio: false
+  }
+});
+
+let fakeChart = new Chart(document.getElementById('fakeChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Fake', 'Real'],
+    datasets: [{ data: [0,0], backgroundColor: [C.right, C.left], borderRadius: 0, borderSkipped: false }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, border: { display: false } },
+      y: { min: 0, max: 1, grid: { color: '#E8E4D8' }, border: { display: false }, ticks: { callback: v => (v*100).toFixed(0)+'%' } }
+    },
+    maintainAspectRatio: false
+  }
+});
+
+// Floating UI
+function waitFUI() {
+  return new Promise(resolve => {
+    if (window.FloatingUI) { resolve(); return; }
+    const t = setInterval(() => { if (window.FloatingUI) { clearInterval(t); resolve(); } }, 50);
+  });
+}
+
+async function showTip(el, text) {
+  const tt = document.getElementById('floating-tooltip');
+  document.getElementById('tt-content').textContent = text;
+  tt.style.display = 'block';
+  await waitFUI();
+  const { x, y } = await window.FloatingUI.computePosition(el, tt, {
+    placement: 'top',
+    middleware: [window.FloatingUI.offset(6), window.FloatingUI.flip(), window.FloatingUI.shift({ padding: 8 })]
+  });
+  Object.assign(tt.style, { left: `${x}px`, top: `${y}px` });
+}
+
+function hideTip() { document.getElementById('floating-tooltip').style.display = 'none'; }
+
+async function showPop(rowEl, h) {
+  const pop = document.getElementById('headline-popover');
+  document.getElementById('pop-text').textContent = h.headline;
+  document.getElementById('pop-source').textContent = h.source;
+  document.getElementById('pop-bias').textContent = h.bias_label.toUpperCase();
+  document.getElementById('pop-bias').className = `bias-stamp stamp-${h.bias_label}`;
+  const sl = h.sentiment > 0.05 ? 'POSITIVE' : h.sentiment < -0.05 ? 'NEGATIVE' : 'NEUTRAL';
+  document.getElementById('pop-sent').textContent = `SENTIMENT: ${sl} (${parseFloat(h.sentiment).toFixed(3)})`;
+  pop.style.display = 'block';
+  await waitFUI();
+  const { x, y } = await window.FloatingUI.computePosition(rowEl, pop, {
+    placement: 'bottom-start',
+    middleware: [window.FloatingUI.offset(4), window.FloatingUI.flip(), window.FloatingUI.shift({ padding: 12 })]
+  });
+  Object.assign(pop.style, { left: `${x}px`, top: `${y}px` });
+}
+
+function hidePop() { document.getElementById('headline-popover').style.display = 'none'; }
+
+async function toggleSrcDrop(btn) {
+  const dd = document.getElementById('source-dropdown');
+  if (dd.style.display === 'block') { dd.style.display = 'none'; return; }
+  dd.style.display = 'block';
+  await waitFUI();
+  const { x, y } = await window.FloatingUI.computePosition(btn, dd, {
+    placement: 'bottom-end',
+    middleware: [window.FloatingUI.offset(4), window.FloatingUI.flip(), window.FloatingUI.shift({ padding: 8 })]
+  });
+  Object.assign(dd.style, { left: `${x}px`, top: `${y}px` });
+}
+
+// Build source dropdown
+const srcs = ['All', ...Object.keys(APP_DATA.sentiment_by_source)];
+document.getElementById('source-dropdown-items').innerHTML = srcs.map(s =>
+  `<button class="dropdown-item" onclick="filterSrc('${s}')">${s}</button>`).join('');
+
+function filterSrc(s) {
+  document.getElementById('source-dropdown').style.display = 'none';
+  hlSource = s === 'All' ? 'all' : s;
+  renderHL();
+}
+
+document.querySelectorAll('.metric-cell[data-tip]').forEach(el => {
+  el.addEventListener('mouseenter', () => showTip(el, el.dataset.tip));
+  el.addEventListener('mouseleave', hideTip);
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#src-btn') && !e.target.closest('#source-dropdown'))
+    document.getElementById('source-dropdown').style.display = 'none';
+  if (!e.target.closest('.headline-row') && !e.target.closest('#headline-popover'))
+    hidePop();
+});
+
+// Helpers
+function sentLabel(s) { return s > 0.05 ? 'POSITIVE' : s < -0.05 ? 'NEGATIVE' : 'NEUTRAL'; }
+function sentColor(s) { return s > 0.05 ? C.left : s < -0.05 ? C.right : '#7A7660'; }
+const BIAS_C = { left: C.left, center: C.center, right: C.right };
+
+// Show predictions
+function showBias(p) {
+  if (!p || !p.bias) return;
+  document.getElementById('res-bias').textContent = p.bias.toUpperCase();
+  document.getElementById('res-bias').style.color = BIAS_C[p.bias];
+  document.getElementById('res-bias-sub').textContent = 'classification';
+  document.getElementById('res-conf').textContent = Math.round(p.confidence * 100) + '%';
+  document.getElementById('res-conf-bar').style.width = Math.round(p.confidence * 100) + '%';
+  document.getElementById('res-sent').textContent = sentLabel(p.sentiment);
+  document.getElementById('res-sent').style.color = sentColor(p.sentiment);
+  document.getElementById('res-sent-sub').textContent = `score: ${p.sentiment.toFixed(3)}`;
+  confChart.data.datasets[0].data = [p.probs.center, p.probs.left, p.probs.right];
+  confChart.update();
+}
+
+function showFake(fp, bp) {
+  if (!fp || !fp.label) return;
+  const isReal = fp.label === 'real';
+  const panel = document.getElementById('verdict-panel');
+  panel.className = `verdict-panel visible ${fp.label}`;
+  document.getElementById('verdict-text').textContent = isReal ? 'VERIFIED REAL' : 'LIKELY FAKE';
+  document.getElementById('verdict-sub').textContent = isReal
+    ? `Confidence: ${Math.round(fp.confidence*100)}% — Consistent with legitimate journalism patterns`
+    : `Confidence: ${Math.round(fp.confidence*100)}% — Consistent with disinformation patterns`;
+
+  document.getElementById('fake-label').textContent = fp.label.toUpperCase();
+  document.getElementById('fake-label').style.color = isReal ? C.left : C.right;
+  document.getElementById('fake-label-sub').textContent = isReal ? 'authentic' : 'fabricated';
+  document.getElementById('fake-conf').textContent = Math.round(fp.confidence * 100) + '%';
+  document.getElementById('fake-conf-bar').style.width = Math.round(fp.confidence * 100) + '%';
+  if (bp && bp.bias) {
+    document.getElementById('fake-bias').textContent = bp.bias.toUpperCase();
+    document.getElementById('fake-bias').style.color = BIAS_C[bp.bias];
+  }
+  fakeChart.data.datasets[0].data = [fp.probs.fake, fp.probs.real];
+  fakeChart.update();
+} 
+
+// ── Form helpers — fills hidden Streamlit forms and submits them ──
+function fillAndSubmit(formIndex, fields) {
+  // formIndex: 0=nav, 1=classify, 2=fake, 3=compare
+  try {
+    const forms = window.parent.document.querySelectorAll('div[data-testid="stForm"]');
+    const form = forms[formIndex];
+    if (!form) return false;
+
+    const inputs = form.querySelectorAll('input[type="text"]');
+    const btn = form.querySelector('button[kind="primaryFormSubmit"], button[type="submit"]');
+
+    Object.entries(fields).forEach(([i, val]) => {
+      const input = inputs[parseInt(i)];
+      if (!input) return;
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value');
+      setter.set.call(input, val);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    if (btn) {
+      setTimeout(() => btn.click(), 150);
+      return true;
+    }
+  } catch(e) { console.error('fillAndSubmit error:', e); }
+  return false;
+}
+
+function submitClassify() {
+  const val = document.getElementById('cls-input').value.trim();
+  if (!val) return;
+  fillAndSubmit(1, { 0: val });
+}
+
+function submitFake() {
+  const val = document.getElementById('fake-input').value.trim();
+  if (!val) return;
+  fillAndSubmit(2, { 0: val });
+}
+
+function submitCompare() {
+  const a = document.getElementById('cmp-a').value.trim();
+  const b = document.getElementById('cmp-b').value.trim();
+  if (!a || !b) return;
+  fillAndSubmit(3, { 0: a, 1: b });
+}
+
+function setClassify(text) { document.getElementById('cls-input').value = text; }
+function setFake(text) { document.getElementById('fake-input').value = text; }
+
+
+// Auto-navigate + pre-fill on load
+const activeTab = APP_DATA.active_tab || 'dashboard';
+if (activeTab !== 'dashboard') {
+  const btn = document.querySelector(`.nav-item[onclick*="'${activeTab}'"]`);
+  if (btn) navigate(activeTab, btn);
+}
+
+if (APP_DATA.query) {
+  document.getElementById('cls-input').value = APP_DATA.query;
+  document.getElementById('fake-input').value = APP_DATA.query;
+  showBias(BIAS_PRED);
+  showFake(FAKE_PRED, BIAS_PRED);
+}
+
+if (APP_DATA.qa && APP_DATA.active_tab === 'compare') {
+  document.getElementById('cmp-a').value = APP_DATA.qa;
+  document.getElementById('cmp-b').value = APP_DATA.query;
+  document.getElementById('cmp-a-preview').textContent = APP_DATA.qa;
+  document.getElementById('cmp-b-preview').textContent = APP_DATA.query;
+  if (BIAS_PRED_A && BIAS_PRED_A.bias) {
+    document.getElementById('cmp-a-bias').textContent = BIAS_PRED_A.bias.toUpperCase();
+    document.getElementById('cmp-a-bias').style.color = BIAS_C[BIAS_PRED_A.bias];
+    document.getElementById('cmp-a-sent').textContent = sentLabel(BIAS_PRED_A.sentiment);
+    document.getElementById('cmp-a-sent').style.color = sentColor(BIAS_PRED_A.sentiment);
+    document.getElementById('cmp-a-sent-sub').textContent = BIAS_PRED_A.sentiment.toFixed(3);
+    cmpChart.data.datasets[0].data = [BIAS_PRED_A.sentiment, BIAS_PRED_A.confidence];
+    cmpChart.update();
+  }
+  if (BIAS_PRED && BIAS_PRED.bias) {
+    document.getElementById('cmp-b-bias').textContent = BIAS_PRED.bias.toUpperCase();
+    document.getElementById('cmp-b-bias').style.color = BIAS_C[BIAS_PRED.bias];
+    document.getElementById('cmp-b-sent').textContent = sentLabel(BIAS_PRED.sentiment);
+    document.getElementById('cmp-b-sent').style.color = sentColor(BIAS_PRED.sentiment);
+    document.getElementById('cmp-b-sent-sub').textContent = BIAS_PRED.sentiment.toFixed(3);
+    cmpChart.data.datasets[1].data = [BIAS_PRED.sentiment, BIAS_PRED.confidence];
+    cmpChart.update();
+  }
+}
+</script>
+</body>
+</html>

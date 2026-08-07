@@ -4,3 +4,4 @@ __pycache__/
 *.pkl
 models/distilbert/
 scrapers/data/
+.streamlit/secrets.toml
