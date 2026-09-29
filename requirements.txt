@@ -7,3 +7,4 @@ vaderSentiment
 sqlalchemy
 psycopg2-binary
 huggingface_hub
+datasets
