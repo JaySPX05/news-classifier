@@ -1,7 +1,8 @@
 import sqlite3
 import os
+from sqlalchemy import create_engine, text
+from config import DATABASE_URL
 
-DB_PATH = "data/headlines.db"
 
 def get_connection():
     os.makedirs("data", exist_ok=True)
@@ -53,3 +54,17 @@ def get_headline_count():
 
 if __name__ == "__main__":
     setup_db()
+
+def insert_to_supabase(headline, source, url=None):
+    try:
+        engine = create_engine(DATABASE_URL)
+        with engine.connect() as conn:
+            conn.execute(text("""
+                INSERT INTO headlines (headline, source, url)
+                VALUES (:headline, :source, :url)
+                ON CONFLICT (headline, source) DO NOTHING
+            """), {"headline": headline, "source": source, "url": url})
+            conn.commit()
+    except Exception as e:
+        pass  # Don't crash the scraper if Supabase is down
+DB_PATH = "data/headlines.db"

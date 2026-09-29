@@ -124,7 +124,10 @@ def load_analyzer():
 
 @st.cache_data(ttl=3600)
 def load_data():
-    engine = create_engine(st.secrets["DATABASE_URL"])
+    engine = create_engine(
+    st.secrets["DATABASE_URL"],
+    connect_args={"sslmode": "require"}
+    )
     df = pd.read_sql(
         "SELECT headline, source, bias_label, sentiment, scraped_at FROM headlines WHERE bias_label IS NOT NULL",
         engine
