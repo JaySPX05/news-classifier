@@ -124,15 +124,23 @@ def load_analyzer():
 
 @st.cache_data(ttl=3600)
 def load_data():
-    import os
-    db_url = st.secrets.get("DATABASE_URL", os.environ.get("DATABASE_URL", ""))
-    # Fix URL format if needed
-    db_url = db_url.replace("postgresql+psycopg2://", "postgresql://")
-    engine = create_engine(db_url)
+    import psycopg2
+    import urllib.parse as urlparse
+
+    url = urlparse.urlparse(st.secrets["DATABASE_URL"])
+    conn = psycopg2.connect(
+        dbname=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port,
+        sslmode="require"
+    )
     df = pd.read_sql(
         "SELECT headline, source, bias_label, sentiment, scraped_at FROM headlines WHERE bias_label IS NOT NULL",
-        engine
+        conn
     )
+    conn.close()
     df["scraped_at"] = pd.to_datetime(df["scraped_at"])
     df["date"] = df["scraped_at"].dt.date.astype(str)
     return df
